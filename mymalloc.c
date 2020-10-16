@@ -19,9 +19,24 @@ void combine(){
 }
 void mymalloc(int bytes, char* file, int line){
 
+char *ptr = &myblock[0];
+int count = 0;
+
+while(ptr!=&myblock[4097]){
+printf("traversing\n");
+
+count++;
+ptr++;
+}
 
 
+printf("\ncount: %d\n", count);
 
+//int *ptr = &myblock;
+
+
+//printf("int: %d", ptr);
+}
   
   /*
   int value;
@@ -39,7 +54,7 @@ void mymalloc(int bytes, char* file, int line){
 
   }
 
-  /*  int md_current, md_prev, md_next; //three ints to track metadata i.e, size of current, previous and next block 
+  int md_current, md_prev, md_next; //three ints to track metadata i.e, size of current, previous and next block 
   int *current,*prev, *next; //three pointers for currennt, previous and next block
 
    first malloc call
@@ -76,16 +91,17 @@ void mymalloc(int bytes, char* file, int line){
     md_prev=-1;
   }
 
+  } 
 */
   //printf("myblock[4096] %d", myblock[0]); //this is just here temporarily for compilation
 
-}
+
 
 void myfree(){
 
 }
 
 int main(){
-  //  mymalloc();
+  malloc(5);
   return 0;
 }

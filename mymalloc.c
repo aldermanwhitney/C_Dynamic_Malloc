@@ -17,22 +17,41 @@ void break_up(){
 void combine(){
 
 }
+
 void mymalloc(int bytes, char* file, int line){
 
 char *ptr = &myblock[0];
 int count = 0;
 
 while(ptr!=&myblock[4097]){
-printf("traversing\n");
+//printf("traversing with char pointer\n");
 
+	
 count++;
 ptr++;
 }
 
+printf("\nbytes traversed: %d\n", count);
 
-printf("\ncount: %d\n", count);
 
-//int *ptr = &myblock;
+
+int *firstintptr = (int *)&myblock[0];
+int *lastintptr = (int *)&myblock[4096];
+int intcount = 0;
+
+while(firstintptr!=lastintptr){
+printf("traversing with int pointer\n");
+
+
+printf("intptr points to: %d", *firstintptr);
+firstintptr++;
+
+intcount++;
+
+}
+
+printf("\nints traversed: %d\n", intcount);
+
 
 
 //printf("int: %d", ptr);

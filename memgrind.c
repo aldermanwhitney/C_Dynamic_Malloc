@@ -32,7 +32,7 @@ gettimeofday(&end_time, NULL);
 //printf("end_time in microseconds: %ld\n", end_time.tv_usec);
 
 //printf("elapsed_time in seconds: %ld\n", end_time.tv_sec-start_time.tv_sec);
-printf("elapsed_time in microseconds: %ld\n", end_time.tv_usec-start_time.tv_usec);
+printf("Test A: elapsed_time in microseconds: %ld\n", end_time.tv_usec-start_time.tv_usec);
 
 return ((end_time.tv_usec)-(start_time.tv_usec));
 }
@@ -65,7 +65,7 @@ struct timeval end_time;
 gettimeofday(&end_time, NULL);
 
 
-printf("elapsed_time in microseconds: %ld\n", end_time.tv_usec-start_time.tv_usec);
+printf("Test B: elapsed_time in microseconds: %ld\n", end_time.tv_usec-start_time.tv_usec);
 return ((end_time.tv_usec)-(start_time.tv_usec));
 }
 
@@ -73,26 +73,55 @@ return ((end_time.tv_usec)-(start_time.tv_usec));
 
 void printruntimes(int runtime[50][2]){
 
+printf("Test A\tTest B\n");
 for (int i = 0; i<50; i++){
 
 for (int j=0; j<2; j++){
-printf("run times: %d", runtime[i][j]);
+printf("%d\t", runtime[i][j]);
 }
 printf("\n");	
 }
 
 }
 
+void printmeanruntimes(int runtime[50][2]){
+
+double testASum = 0;
+double testBSum = 0;
+	
+for (int i = 0; i<50; i++){
+
+for (int j=0; j<2; j++){
+if(j==0){
+testASum += runtime[i][j];
+}
+else{
+testBSum += runtime[i][j];
+}
+}	
+}
+
+printf("Average Runtimes:\n");
+printf("Test A\tTest B\n");
+printf("%.3f\t", testASum/50);
+printf("%.3f\t", testBSum/50);
+
+}
+
+
 int main(int argc, char **argv){
 
-int runtime[50][2]; //initializes 50 row, 2 column array to store runtimes
+int runtime[50][2]; //initializes 50 row, 2 column array to store runtimes - will increase column size for every new test
 
 for(int i = 0; i<50; i++){
 
-	for (int j = 0; j<2; j++){	
+	for (int j = 0; j<2; j++){
+
+	//column 0, Test A runtimes	
 	if (j==0){
 	runtime[i][j]=(testA());
 	}
+	//column 1, Test A runtimes	
 	else{
 	runtime[i][j]=(testB());
 	}
@@ -100,6 +129,6 @@ for(int i = 0; i<50; i++){
 }
 
 printruntimes(runtime);
-
+printmeanruntimes(runtime);
 return 0;
 }

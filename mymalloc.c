@@ -18,13 +18,34 @@ void combine(){
 
 }
 void mymalloc(int bytes, char* file, int line){
-  int md_current, md_prev, md_next; //three ints to track metadata i.e, size of current, previous and next block 
+
+
+
+
+  
+  /*
+  int value;
+  int* current;
+  myblock[0]= (int) value;
+  current = &value;
+  //current = &myblock[0];
+  while(value!=0){
+
+    current = current+value+sizeof(int);
+    value = *current;
+  }
+
+  if(value == 0) {
+
+  }
+
+  /*  int md_current, md_prev, md_next; //three ints to track metadata i.e, size of current, previous and next block 
   int *current,*prev, *next; //three pointers for currennt, previous and next block
 
-  /* first malloc call
+   first malloc call
      we set the metadata of first block as 0 to indicate free space
      we set the current pointer to the space right after current metadata
-  */
+  
   if(md_prev==0 && md_next==0){
     md_current = 0;
     myblock[0]=md_current;
@@ -33,9 +54,9 @@ void mymalloc(int bytes, char* file, int line){
     md_next=0;
   }
 
-  /*if the current block is full, we malloc to next block 
+  if the current block is full, we malloc to next block 
     and move current pointer to that block
-  */
+  
   if(md_current!=0 && current!=NULL && md_next==0 && bytes>0){
     prev = current;
     md_prev=md_current;
@@ -44,10 +65,10 @@ void mymalloc(int bytes, char* file, int line){
     next=current+md_current+4;//records a pointer to next free space
     md_next=0;
   }
-  /*
+  
     very first block is empty
     so add data there
-  */
+  
   if(bytes>0 && md_current==0 && current!=NULL){
     md_current=bytes;
     next=current+md_current+4;
@@ -55,7 +76,7 @@ void mymalloc(int bytes, char* file, int line){
     md_prev=-1;
   }
 
-
+*/
   //printf("myblock[4096] %d", myblock[0]); //this is just here temporarily for compilation
 
 }

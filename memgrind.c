@@ -71,8 +71,8 @@ return ((end_time.tv_usec)-(start_time.tv_usec));
 
 /*Gets a random number between 0 and 1, 
 to randomly malloc and free pointers 240 times.
-Mallocing not allowed after 120 mallocs are made
-Freeing not allowed if no pointers to free
+Mallocing not allowed after a total of 120 mallocs are made
+Freeing not allowed if no pointers to free, frees all pointers malloced
 returns int - the number of microseconds of the entire process 
 */
 int testC(){
@@ -84,9 +84,8 @@ gettimeofday(&start_time, NULL);
  char *ptrarray[120];
  int numberFreed=0;
  int totalMallocs=0;
-
- for(int i = 0; i < 240; i++){
-
+ int i = 0;
+ while(totalMallocs<=120 && i < 240){
  //choosing random between 0 and 1 
  int random = rand()%2;
  //  printf("random number is %d\n", random);
@@ -94,6 +93,18 @@ gettimeofday(&start_time, NULL);
    random=1;
  }
  // printf("random number is %d\n", random);
+ if(random==1){
+   //free if random is 1                                                                                                                                               
+   if(numberMalloced!=0 && ptrarray[numberMalloced-1]!=NULL){
+   free(ptrarray[numberMalloced-1]);
+   numberFreed++;
+   numberMalloced--;
+   }
+   else{
+    random=0;
+    //printf("nothing to free\n");
+   }
+ }
  if(random==0){
    //malloc if random is 0
    char *ptr = malloc(1);
@@ -101,34 +112,66 @@ gettimeofday(&start_time, NULL);
    numberMalloced++;
    totalMallocs++;
  }
- else if(random==1){
-   //free if random is 1
-   if(numberMalloced!=0 && ptrarray[numberMalloced-1]!=NULL){
-   free(ptrarray[numberMalloced-1]);
-   numberFreed++;
-   numberMalloced--;
-   }
-   else{
-     //     numberFreed++;
-     // printf("nothing to free\n");
-   }
+  
+ i++;
  }
- }
-
- printf("Number of mallocs %d, number of frees %d\n",totalMallocs,numberFreed);
+ // printf("Number of mallocs %d, number of frees %d\n",totalMallocs,numberFreed);
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
 
 return ((end_time.tv_usec)-(start_time.tv_usec));
 }
 
+/*Mallocs the whole array byte by byte and
+frees each odd byte in the whole array,
+then tries to malloc more than 1 byte in 
+a smaller free space i.e in a 1 byte space
+tests for splitting the array as malloc and
+frees are made and tests for mallocing a block 
+bigger than all the available free blocks
+*/
+int testD(){
+struct timeval start_time;
+gettimeofday(&start_time, NULL);
 
-void printruntimes(int runtime[50][3]){
+char *ptrarray[4096];
+ int mcounter=0, fcount=0, realloc=0;
+ for(int i = 0; i < 4096; i++){
+   char *ptr = malloc(1);
+   if(ptr!=NULL){
+   ptrarray[i]=ptr;
+   mcounter++;
+   }
+ }
 
-printf("Test A\tTest B\tTest C\n");
+ for(int i = 0; i<4096; i++){
+   if(ptrarray[i]!=NULL && i%2==1){
+     free(ptrarray[i]);
+     fcount++;
+   }
+ }
+
+ for(int i = 0; i<4096; i++){
+   char *ptr = malloc(2);
+   if(i%2==1 && ptr!=NULL){
+     ptrarray[i]=ptr;
+     realloc++;
+   }
+ }
+
+ printf("malloc count %d, freed count %d, realloc count %d, size of array %ld\n",mcounter,fcount,realloc,sizeof(ptrarray)); 
+struct timeval end_time;
+gettimeofday(&end_time, NULL);
+return ((end_time.tv_usec)-(start_time.tv_usec));
+}
+
+
+void printruntimes(int runtime[50][4]){
+
+printf("Test A\tTest B\tTest C\tTest D\n");
 for (int i = 0; i<50; i++){
 
-for (int j=0; j<3; j++){
+for (int j=0; j<4; j++){
 printf("%d\t", runtime[i][j]);
 }
 printf("\n");	
@@ -136,14 +179,15 @@ printf("\n");
 
 }
 
-void printmeanruntimes(int runtime[50][3]){
+void printmeanruntimes(int runtime[50][4]){
 
 double testASum = 0;
 double testBSum = 0;
 double testCSum = 0;
+double testDSum = 0;
 for (int i = 0; i<50; i++){
 
-for (int j=0; j<3; j++){
+for (int j=0; j<4; j++){
 if(j==0){
 testASum += runtime[i][j];
 }
@@ -153,6 +197,9 @@ testBSum += runtime[i][j];
  else if(j==2){
    testCSum += runtime[i][j];
  }
+ else if(j==3){
+   testDSum += runtime[i][j];
+ }
 }	
 }
 
@@ -160,18 +207,18 @@ printf("Average Runtimes:\n");
 printf("Test A\tTest B\tTest C\n");
 printf("%.3f\t", testASum/50);
 printf("%.3f\t", testBSum/50);
- printf("%.3f\t", testCSum/50);
-
+printf("%.3f\t", testCSum/50);
+printf("%.3f\t", testDSum/50);
 }
 
 
 int main(int argc, char **argv){
 
-int runtime[50][3]; //initializes 50 row, 3 column array to store runtimes - will increase column size for every new test
+int runtime[50][4]; //initializes 50 row, 3 column array to store runtimes - will increase column size for every new test
 
 for(int i = 0; i<50; i++){
 
-	for (int j = 0; j<3; j++){
+	for (int j = 0; j<4; j++){
 
 	//column 0, Test A runtimes	
 	if (j==0){
@@ -185,10 +232,14 @@ for(int i = 0; i<50; i++){
 	else if(j==2){
 	  runtime[i][j]=(testC());
 	}
+	//column 3, Test D runtimes
+	else if(j==3){
+          runtime[i][j]=(testD());
+        }
 	}
 }
-
-printruntimes(runtime);
-printmeanruntimes(runtime);
+//printf("%ld", sizeof(int));
+//printruntimes(runtime);
+//printmeanruntimes(runtime);
 return 0;
 }

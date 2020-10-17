@@ -122,7 +122,7 @@ gettimeofday(&end_time, NULL);
 return ((end_time.tv_usec)-(start_time.tv_usec));
 }
 
-/*Mallocs the whole array byte by byte and
+/*Mallocs an array byte by byte for 240 bytes and
 frees each odd byte in the whole array,
 then tries to malloc more than 1 byte in 
 a smaller free space i.e in a 1 byte space
@@ -134,9 +134,10 @@ int testD(){
 struct timeval start_time;
 gettimeofday(&start_time, NULL);
 
-char *ptrarray[4096];
+char *ptrarray[240];
+// printf("%ld", sizeof(ptrarray));
  int mcounter=0, fcount=0, realloc=0;
- for(int i = 0; i < 4096; i++){
+ for(int i = 0; i < 240; i++){
    char *ptr = malloc(1);
    if(ptr!=NULL){
    ptrarray[i]=ptr;
@@ -144,14 +145,14 @@ char *ptrarray[4096];
    }
  }
 
- for(int i = 0; i<4096; i++){
+ for(int i = 0; i<240; i++){
    if(ptrarray[i]!=NULL && i%2==1){
      free(ptrarray[i]);
      fcount++;
    }
  }
 
- for(int i = 0; i<4096; i++){
+ for(int i = 0; i<240; i++){
    char *ptr = malloc(2);
    if(i%2==1 && ptr!=NULL){
      ptrarray[i]=ptr;
@@ -159,19 +160,54 @@ char *ptrarray[4096];
    }
  }
 
- printf("malloc count %d, freed count %d, realloc count %d, size of array %ld\n",mcounter,fcount,realloc,sizeof(ptrarray)); 
+ //printf("malloc count %d, freed count %d, realloc count %d, size of array %ld\n",mcounter,fcount,realloc,sizeof(ptrarray)); 
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
 return ((end_time.tv_usec)-(start_time.tv_usec));
 }
 
+/* allocates 240 bytes and 
+frees them in order starting from 120 bytes 
+to test for stiching 
+of consecutive free blocks in order
+to allocate a big chunk of memory in
+this stiched block
+*/
+int testE(){
+struct timeval start_time;
+gettimeofday(&start_time, NULL);
 
-void printruntimes(int runtime[50][4]){
+ char *ptrarray[240];
+ for(int i = 0; i < 24; i++){
+   char *ptr = malloc(10);
+   ptrarray[i]=ptr;
+ }
 
-printf("Test A\tTest B\tTest C\tTest D\n");
+ for(int i = 12; i < 24; i++){
+   free(ptrarray[i]);
+   if(i>12 && i%3==0){
+     char *ptr = malloc(50);
+     if(ptr!=NULL){
+     ptrarray[i]=ptr;
+     }
+     else{
+       char *ptr = malloc(30);
+       ptrarray[i]=ptr;
+   }
+ }
+ }
+ 
+struct timeval end_time;
+gettimeofday(&end_time, NULL);
+return ((end_time.tv_usec)-(start_time.tv_usec));
+}
+
+void printruntimes(int runtime[50][5]){
+
+printf("Test A\tTest B\tTest C\tTest D\tTest E\n");
 for (int i = 0; i<50; i++){
 
-for (int j=0; j<4; j++){
+for (int j=0; j<5; j++){
 printf("%d\t", runtime[i][j]);
 }
 printf("\n");	
@@ -179,15 +215,16 @@ printf("\n");
 
 }
 
-void printmeanruntimes(int runtime[50][4]){
+void printmeanruntimes(int runtime[50][5]){
 
 double testASum = 0;
 double testBSum = 0;
 double testCSum = 0;
 double testDSum = 0;
+double testESum = 0;
 for (int i = 0; i<50; i++){
 
-for (int j=0; j<4; j++){
+for (int j=0; j<5; j++){
 if(j==0){
 testASum += runtime[i][j];
 }
@@ -200,25 +237,29 @@ testBSum += runtime[i][j];
  else if(j==3){
    testDSum += runtime[i][j];
  }
+ else if(j==4){
+   testESum += runtime[i][j];
+ }
 }	
 }
 
 printf("Average Runtimes:\n");
-printf("Test A\tTest B\tTest C\n");
+printf("Test A\tTest B\tTest C\tTest D\tTest E\n");
 printf("%.3f\t", testASum/50);
 printf("%.3f\t", testBSum/50);
 printf("%.3f\t", testCSum/50);
 printf("%.3f\t", testDSum/50);
+printf("%.3f\t", testESum/50); 
 }
 
 
 int main(int argc, char **argv){
 
-int runtime[50][4]; //initializes 50 row, 3 column array to store runtimes - will increase column size for every new test
+int runtime[50][5]; //initializes 50 row, 3 column array to store runtimes - will increase column size for every new test
 
 for(int i = 0; i<50; i++){
 
-	for (int j = 0; j<4; j++){
+	for (int j = 0; j<5; j++){
 
 	//column 0, Test A runtimes	
 	if (j==0){
@@ -236,10 +277,14 @@ for(int i = 0; i<50; i++){
 	else if(j==3){
           runtime[i][j]=(testD());
         }
+	//coulumn 4, Test E runtimes
+	else if(j==4){
+          runtime[i][j]=(testE());
+        }
 	}
 }
 //printf("%ld", sizeof(int));
-//printruntimes(runtime);
-//printmeanruntimes(runtime);
+printruntimes(runtime);
+printmeanruntimes(runtime);
 return 0;
 }

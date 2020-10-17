@@ -9,12 +9,64 @@ Compile this with gcc mymalloc.c -c to make it an object file instead of an exec
 or, with gcc -Wall -Werror mymalloc.c -c
 */
 
-static char myblock[4096] = {4,'z','y','x','w', 2,'x','d',3}; //global variable for memory
-void break_up(){
+static char myblock[4096];
+
+struct Metadata{
+int size;
+int isfree;
+struct Metadata *next;
+};
+//struct Metadata* firstmetadata = NULL;
+
+
+
+void printbyteindex(struct Metadata* metadata){
+printf("myblock[%ld]\n", ((char *)metadata - (char *)&myblock[0]));	
+}
+
+
+void printlinkedlist(struct Metadata* firstmetadata){
+
+struct Metadata *current = firstmetadata;
+	
+while (current!=NULL){
+printbyteindex(current);
+printf("[size: %d ", current->size);
+printf("isfree: %d ]\n", current->isfree);
+
+current = current->next;	
+}
+}
+
+int getindex(struct Metadata* metadata){
+return ((char * )metadata - (char * )&myblock[0]);
+} 
+
+
+void splitblock(struct Metadata* metadata, int bytes){
+
+int oldsize = metadata->size;	
+int blockexcess = bytes-(metadata->size);
+
+// The block contains more bytes than the user requested
+// either create a new block with remaining bytes
+// or if too small, give the user a few extra bytes
+
+//create new block
+if (blockexcess>sizeof(struct Metadata)){
+void* userptr = (void*)metadata + sizeof(struct Metadata) + 1; //pointer to first spot after meta data
+struct Metadata *newmetadata = (void*)&myblock[getindex(metadata)+sizeof(struct Metadata)+bytes+1]; 
+newmetadata->isfree = 1;
+newmetadata->size = bytes;
+newmetadata->next = metadata->next;
+metadata->next = newmetadata;
+//printf("metadata points to byte %ld\n", ((char *)metadata - (char *)&myblock[0]));	
+}
+
 
 }
 
-void combine(){
+void combineblocks(){
 
 }
 
@@ -29,8 +81,94 @@ p = (int *) (&myblock[(toAdd+(oldValue&~1) + 4)]);
 toAdd+=(oldValue&~1)+4;														}
 }
 
+/**Returns false (0) if the memory array is all zeros
+ *This means that it has not yet been malloced
+ */
+int isfirstmalloc(){
+
+int *ptr = (int*)&myblock[0];
+
+while(ptr<(int*)&myblock[4096]){
+if (*ptr!=0){
+return 0;
+}
+ptr++;
+}
+
+return 1;	
+}
+
+
 void mymalloc(int bytes, char* file, int line){
 
+struct Metadata *firstmetadata = (void*)&myblock[0]; //set a struct metadata pointer pointing for first spot in myblock
+
+
+printf("is this the first malloc?: %d\n", isfirstmalloc());
+if (isfirstmalloc()){
+//struct Metadata *test = (void*)myblock;
+//*firstmetadata = (void*)&myblock[0]; //set a struct metadata pointer pointing for first spot in myblock
+
+//printf("size of metadata pointer:%ld\n", sizeof(test));
+
+//If this is the first call to malloc, create first metadata block	
+firstmetadata->isfree=1;
+firstmetadata->size = 4096-sizeof(struct Metadata);
+firstmetadata->next=NULL;
+	
+//printf("size of metadata pointer:%ld\n", sizeof(test));
+//printf("size of metadata struct:%ld\n", sizeof(struct Metadata));
+
+//printf("test dec address%lu\n", (unsigned long)test);
+//printf("current dec address%lu\n", (unsigned long)current);
+printf("test dec value %d at %li\n", firstmetadata->size, ((int *)firstmetadata - (int *)&myblock[0]));	
+
+void* userptr = (void*)firstmetadata + sizeof(struct Metadata) + 1;
+//void* userptr = sizeof(struct)+1;
+printf("(int)firstmetadata points at myblock[%ld]\n", ((int *)firstmetadata - (int *)&myblock[0]));	
+printf("(int) userptr points at myblock[%ld]\n", ((int *)userptr - (int *)&myblock[0]));	
+printf("(char)firstmetadata points at myblock[%ld]\n", ((char *)firstmetadata - (char *)&myblock[0]));	
+printf("(char) userptr points at myblock[%ld]\n", ((char *)userptr - (char *)&myblock[0]));	
+
+printf("firstmetadata points at byte %ld\n", ((char *)firstmetadata - (char *)&myblock[0]));	
+printf("userptr points at byte %ld\n", ((char *)userptr - (char *)&myblock[0]));	
+
+//printf("test dec address%lu points to \n", (unsigned long)test);
+//printf("userptr dec address%lu\n", (unsigned long)userptr);
+return;
+}
+else	
+{
+struct Metadata *current = firstmetadata;
+struct Metadata *prev = NULL;
+//while((char*)current<=&myblock[4096]){
+while(current!=NULL){
+
+if ((current->size)>=bytes){
+printf("found block which matches request. Splitting..");
+splitblock(current, bytes);
+printlinkedlist(firstmetadata);
+}		
+prev = current;
+current = current->next;
+}
+//reached the end of the linked list - no block found which is big enough
+if (current==NULL){
+//return NULL
+}	
+
+
+}
+
+
+
+
+
+
+
+
+}
+/*
 char *ptr = &myblock[0];
 int count = 0;
 
@@ -50,15 +188,18 @@ int *lastintptr = (int *)&myblock[4096];
 int intcount = 0;
 
 while(firstintptr!=lastintptr){
-//printf("traversing with int pointer\n");
-//printf("intptr points to: %d", *firstintptr);
+printf("traversing with int pointer\n");
+printf("intptr points to: %d", *firstintptr);
 firstintptr++;
 intcount++;
+if (intcount==20){
+break;
+}
 }
 
 printf("\nints traversed: %d\n", intcount);
-
-
+}
+/*
 
 int *firstmetadata = (int *)&myblock[0];
 int *lastmetadata = (int *)&myblock[4096];
@@ -139,7 +280,7 @@ count7++;
 printf("count7: %d\n", count7);
 
 
-/*
+
 
 int *currentmetadata = (int *)&myblock[0]; //pointer to first spot in array where meta data is storeda, will traverse list with this
 //int *prevmetadata = NULL:
@@ -155,7 +296,6 @@ currentmetadata+=currentvalue;
 }
 
 */
-}
 
  
   /*
@@ -222,6 +362,7 @@ void myfree(){
 }
 
 int main(){
+  malloc(8);
   malloc(5);
   printmemory();
   return 0;

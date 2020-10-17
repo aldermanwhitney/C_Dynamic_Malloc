@@ -96,7 +96,7 @@ toAdd+=(oldValue&~1)+4;														}
 /**Returns false (0) if the memory array is all zeros
  *This means that it has not yet been malloced
  */
-int isfirstmalloc(){
+int isUninitialized(){
 
 int *ptr = (int*)&myblock[0];
 
@@ -116,26 +116,15 @@ void* mymalloc(int bytes, char* file, int line){
 struct Metadata *firstmetadata = (void*)&myblock[0]; //set a struct metadata pointer pointing for first spot in myblock
 
 printf("\n\nmalloc(%d)\n", bytes);
-printf("is this the first malloc?: %d\n", isfirstmalloc());
+printf("is this the first malloc?: %d\n", isUninitialized());
 
 
-if (isfirstmalloc()){
+if (isUninitialized()){
 
 //If this is the first call to malloc, create first metadata block	
 firstmetadata->isfree=1;
 firstmetadata->size = 4096-sizeof(struct Metadata);
 firstmetadata->next=NULL;
-
-//dont need this yet
-void* userptr2 = (void*)firstmetadata + sizeof(struct Metadata) + 1;
-
-printf("(int)firstmetadata points at myblock[%ld]\n", ((int *)firstmetadata - (int *)&myblock[0]));	
-printf("(int) userptr points at myblock[%ld]\n", ((int *)userptr2 - (int *)&myblock[0]));	
-printf("(char)firstmetadata points at myblock[%ld]\n", ((char *)firstmetadata - (char *)&myblock[0]));	
-printf("(char) userptr points at myblock[%ld]\n", ((char *)userptr2 - (char *)&myblock[0]));	
-
-printf("firstmetadata points at byte %ld\n", ((char *)firstmetadata - (char *)&myblock[0]));	
-printf("userptr points at byte %ld\n", ((char *)userptr2 - (char *)&myblock[0]));	
 }
 
 struct Metadata *current = firstmetadata;
@@ -160,19 +149,58 @@ return NULL;
 }
 
 
-void myfree(){
+void myfree(void *ptr, char* file, int line){
 
+//no memory has been allocated
+if(isUninitialized){
+return;
+}
+
+struct Metadata *firstmetadata = (void*)&myblock[0]; //set a struct metadata pointer pointing for first spot in myblock
+
+
+struct Metadata *current = firstmetadata;
+struct Metadata *prev = NULL;
+
+//iterate through metadata linked list
+//look at all nonfree metadata
+//check each byte after the metadata
+//searching for a pointer which matches the parameter pointer
+while(current!=NULL){
+if (current->isfree==0){
+
+//check byte after metadata	
+void* userptr = (void*)current + sizeof(struct Metadata) + 1; //pointer to first spot after meta data
+
+//if this matches the given pointer, found a match. remove and return
+if(userptr==ptr){
+current->isfree=1;	
+return;
+}
+}		
+prev = current;
+current = current->next;
+}
+
+
+	
 }
 
 int main(){
- 
+
+
+//Just some preliminary tests for mymalloc	
 char* call1 = malloc(5);
 char* call2 = malloc(8);
 char* call3 = malloc(7);
 
-printuserptrindex(call1);
+printuserptrindex(call1); //this just tests to see that the byte returned to the user is 1 byte after the (correct) metadata
 printuserptrindex(call2);
 printuserptrindex(call3);
+
+free(call1);
+printuserptrindex(call1); //this just tests to see that the byte returned to the user is 1 byte after the (correct) metadata
+
 //for(int i=0; i<240; i++){	
 //malloc(1);
 //}

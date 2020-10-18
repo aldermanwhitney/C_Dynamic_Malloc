@@ -237,6 +237,7 @@ printf("ERROR: (File:%s Line:%d) No pointer found to free\n", file, line);
 return;
 }
 
+/*
 //This can be commented out for purposes of using make memgrind. If you want to test here, just compile mymalloc.c regularly
 int main(){
 
@@ -267,3 +268,4 @@ free(x);
  // printmemory();
   return 0;
 }
+*/

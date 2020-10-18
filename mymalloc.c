@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
-#define malloc( x ) mymalloc( x, __FILE__, __LINE__ )
-#define free( x ) myfree( x, __FILE__, __LINE__ )
+#include "mymalloc.h"
+//#define malloc( x ) mymalloc( x, __FILE__, __LINE__ ) //uncomment these two lines, and main to only test mymalloc.c without memgrind
+//#define free( x ) myfree( x, __FILE__, __LINE__ )
 
 /**This file is for our mymalloc and myfree function implementations
  *There will not be a main in this file, will need to link when compiling
@@ -12,12 +12,14 @@ or, with gcc -Wall -Werror mymalloc.c -c
 
 static char myblock[4096]; //global array of 4096 bytes
 
+//This definition is now in the header file
+/*
 struct Metadata{ //size of our metadata is 16 bytes
 int size; //number of bytes to be malloced
 int isfree; //1 for true, 0 for false
 struct Metadata *next;
 };
-
+*/
 /**Returns true (1) if the memory array is NOT all zeros
  *This means that it has been initialized and contains metadata
  */
@@ -235,7 +237,7 @@ printf("ERROR: (File:%s Line:%d) No pointer found to free\n", file, line);
 return;
 }
 
-
+//This can be commented out for purposes of using make memgrind. If you want to test here, just compile mymalloc.c regularly
 int main(){
 
 
@@ -265,3 +267,4 @@ free(x);
  // printmemory();
   return 0;
 }
+

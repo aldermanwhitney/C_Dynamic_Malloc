@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
+//#include "mymalloc.h" //needed when youre ready to link to mymalloc
+//#include "mymalloc.c"
+
 /**This file will include the memory test
  *To test our functions for mymalloc() and myfree()
  from mymalloc.c

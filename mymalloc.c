@@ -115,7 +115,7 @@ metadata->isfree = 0;
 else //case where the block is two small to split, return a slightly larger size to the user
 {
 //printf("could not split block, not large enough");	
-metadata->isfree=1;
+metadata->isfree=0;
 }
 
 
@@ -174,10 +174,15 @@ return;
 //do not combine if both blocks are not free	
 if ((block1->isfree==0) || (block2->isfree==0)){
 return;
-}	
-block1->next = block2->next;
+}
+ if(block2->next!=NULL){
+   block1->next = block2->next;
+ }
+ else{
+   block1->next = NULL;
+ }
 block1->size=((block1->size) + (block2->size) + sizeof(struct Metadata));
-block2->next=NULL;
+block2=NULL;
 
 printf("adjacent free blocks found and combined.\n");
 return; 
@@ -194,11 +199,12 @@ return;
 
 struct Metadata *firstmetadata = (void*)&myblock[0]; //set a struct metadata pointer pointing for first spot in myblock
 
-
+ struct Metadata *next;
 struct Metadata *current = firstmetadata;
 struct Metadata *prev = NULL;
-struct Metadata *next = current->next;
-
+ if(current->next!=NULL){
+   next = current->next;
+ }
 //iterate through metadata linked list
 //look at all nonfree metadata
 //check each byte after the metadata
@@ -217,18 +223,24 @@ userptr = NULL; //throw away user pointer
 printf("found the user pointer, and freed it\n");
 
 //combine with previous or next blocks if applicable
-combineblocks(prev, current);
+//combineblocks(prev, current);
 combineblocks(current, next);
-
+combineblocks(prev, current); 
 //printlinkedlist();
 return;
 }
 }
-if(next->next!=NULL){
+ if(current!=NULL){
+   prev = current;
+ }
+ if(current->next!=NULL){
+current = current->next;
+ }
+ if(next->next!=NULL){
 next = next->next;
 }
-prev = current;
-current = current->next;
+ //prev = current;
+//current = current->next;
 }
 
 

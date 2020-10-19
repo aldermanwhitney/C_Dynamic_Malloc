@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-//#include "mymalloc.h" //needed when youre ready to link to mymalloc
+#include "mymalloc.h" //needed when youre ready to link to mymalloc
 //#include "mymalloc.c"
 
 /**This file will include the memory test
@@ -37,7 +37,7 @@ gettimeofday(&end_time, NULL);
 //printf("elapsed_time in seconds: %ld\n", end_time.tv_sec-start_time.tv_sec);
 //printf("Test A: elapsed_time in microseconds: %ld\n", end_time.tv_usec-start_time.tv_usec);
 
-return ((end_time.tv_usec)-(start_time.tv_usec));
+ return ((((end_time.tv_usec)-(start_time.tv_usec))*1000000)+((end_time.tv_usec)-(start_time.tv_usec)));
 }
 
 
@@ -61,7 +61,6 @@ for(int j = 0; j<120; j++){
 free(ptrarray[j]);
 }
 
-
 //printf("%s", ptrarray[0]); //this line is here temporarily for compilation
 
 struct timeval end_time;
@@ -69,7 +68,8 @@ gettimeofday(&end_time, NULL);
 
 
 //printf("Test B: elapsed_time in microseconds: %ld\n", end_time.tv_usec-start_time.tv_usec);
-return ((end_time.tv_usec)-(start_time.tv_usec));
+
+ return ((((end_time.tv_usec)-(start_time.tv_usec))*1000000)+((end_time.tv_usec)-(start_time.tv_usec)));
 }
 
 /*Gets a random number between 0 and 1, 
@@ -122,7 +122,7 @@ gettimeofday(&start_time, NULL);
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
 
-return ((end_time.tv_usec)-(start_time.tv_usec));
+return ((((end_time.tv_usec)-(start_time.tv_usec))*1000000)+((end_time.tv_usec)-(start_time.tv_usec)));
 }
 
 /*Mallocs an array byte by byte for 240 bytes and
@@ -137,10 +137,10 @@ int testD(){
 struct timeval start_time;
 gettimeofday(&start_time, NULL);
 
-char *ptrarray[240];
-// printf("%ld", sizeof(ptrarray));
+char *ptrarray[260];
+//printf("size of ptr array%ld\n", sizeof(ptrarray));
  int mcounter=0, fcount=0, realloc=0;
- for(int i = 0; i < 240; i++){
+ for(int i = 0; i < 260; i++){
    char *ptr = malloc(1);
    if(ptr!=NULL){
    ptrarray[i]=ptr;
@@ -148,25 +148,34 @@ char *ptrarray[240];
    }
  }
 
- for(int i = 0; i<240; i++){
+ for(int i = 0; i<260; i++){
    if(ptrarray[i]!=NULL && i%2==1){
      free(ptrarray[i]);
      fcount++;
    }
  }
 
- for(int i = 0; i<240; i++){
-   char *ptr = malloc(2);
-   if(i%2==1 && ptr!=NULL){
+ for(int i = 0; i < 260; i++){
+   //char *ptr = malloc(2);
+   if(i%2==1){
+     char *ptr = malloc(2);
+     if(ptr!=NULL){
      ptrarray[i]=ptr;
      realloc++;
+     }
    }
  }
-
- //printf("malloc count %d, freed count %d, realloc count %d, size of array %ld\n",mcounter,fcount,realloc,sizeof(ptrarray)); 
+ /* 
+ for(int i = 0; i<240; i++){
+   if(ptrarray[i]!=NULL){
+     free(ptrarray[i]);
+   }
+ }
+ */
+ printf("malloc count %d, freed count %d, realloc count %d, size of array %ld\n",mcounter,fcount,realloc,sizeof(ptrarray)); 
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
-return ((end_time.tv_usec)-(start_time.tv_usec));
+return ((((end_time.tv_usec)-(start_time.tv_usec))*1000000)+((end_time.tv_usec)-(start_time.tv_usec)));
 }
 
 /* allocates 240 bytes and 
@@ -202,8 +211,46 @@ gettimeofday(&start_time, NULL);
  
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
+return ((((end_time.tv_usec)-(start_time.tv_usec))*1000000)+((end_time.tv_usec)-(start_time.tv_usec)));
+
+}
+/*
+int testF(){
+struct timeval start_time;
+gettimeofday(&start_time, NULL);
+
+//for(int i = 0; i < 120; i++){
+   int x;
+   free( (int*)x );
+ 
+ char* p;
+ //for(int i = 0; i < 120; i++){
+     p = (char *)malloc( 200 );
+     free(p+10);
+ 
+
+ // for(int i = 0; i < 120; i++){
+    int * x;
+    free(x);
+  
+
+  p = (char*)malloc(100);
+  free(p);
+  free(p);
+
+  p = (char *)malloc( 100 );
+  free(p);
+  p = (char *)malloc( 100 );
+  free(p);
+
+ p = (char*)malloc(4096);
+ q = (char*)malloc(1);
+ p = (char*)malloc(5000);
+struct timeval end_time;
+gettimeofday(&end_time, NULL);
 return ((end_time.tv_usec)-(start_time.tv_usec));
 }
+*/
 
 void printruntimes(int runtime[50][5]){
 
@@ -257,36 +304,47 @@ printf("%.3f\t", testESum/50);
 
 
 int main(int argc, char **argv){
-
+  // int *x = malloc(4080);
+  // int *y = malloc(1);
 int runtime[50][5]; //initializes 50 row, 3 column array to store runtimes - will increase column size for every new test
 
-for(int i = 0; i<50; i++){
+for(int i = 0; i<1; i++){
 
 	for (int j = 0; j<5; j++){
-
+	 
 	//column 0, Test A runtimes	
 	if (j==0){
 	runtime[i][j]=(testA());
 	}
+	
+	
 	//column 1, Test B runtimes	
-	else if(j==1){
+        if(j==1){
 	runtime[i][j]=(testB());
 	}
+	
 	//column 2, Test C runtimes
-	else if(j==2){
+        if(j==2){
 	  runtime[i][j]=(testC());
-	}
+	  }
+	  
+	  /*
 	//column 3, Test D runtimes
-	else if(j==3){
+	 if(j==3){
           runtime[i][j]=(testD());
-        }
-	//coulumn 4, Test E runtimes
-	else if(j==4){
+	  }
+	  */
+	 /*
+	//column 4, Test E runtimes
+        if(j==4){
           runtime[i][j]=(testE());
         }
+	  */
+	
 	}
 }
-//printf("%ld", sizeof(int));
+// printlinkedlist();
+ //printf("%ld", sizeof(int));
 printruntimes(runtime);
 printmeanruntimes(runtime);
 return 0;

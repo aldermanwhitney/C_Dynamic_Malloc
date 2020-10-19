@@ -9,35 +9,24 @@
  *To test our functions for mymalloc() and myfree()
  from mymalloc.c
  */
-
-
+		
 /**Test A: Malloc one byte and immediately free it, 120 times
  *returns int - the time in microseconds the entire operation required
  */
-int testA(){
-
+double testA(){
+	
 struct timeval start_time;
 gettimeofday(&start_time, NULL);
-//printf("start_time in seconds: %ld\n", start_time.tv_sec);
-//printf("start_time in microseconds: %ld\n", start_time.tv_usec);
-
 
 for (int i = 0; i<120; i++){
 char *ptr = malloc(1);
 free(ptr);
 }	
 	
-
-
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
-//printf("end_time: %ld\n", end_time.tv_sec);
-//printf("end_time in microseconds: %ld\n", end_time.tv_usec);
 
-//printf("elapsed_time in seconds: %ld\n", end_time.tv_sec-start_time.tv_sec);
-//printf("Test A: elapsed_time in microseconds: %ld\n", end_time.tv_usec-start_time.tv_usec);
-
- return ((((end_time.tv_usec)-(start_time.tv_usec))*1000000)+((end_time.tv_usec)-(start_time.tv_usec)));
+return (double)(((end_time.tv_sec * 1000000) + (end_time.tv_usec)) - ((start_time.tv_sec * 1000000) + (start_time.tv_usec)));
 }
 
 
@@ -45,7 +34,7 @@ gettimeofday(&end_time, NULL);
  *Then, free bytes from the array one by one
  *returns int - the number of microseconds of the entire process
  */
-int testB(){
+double testB(){
 
 char *ptrarray[120];
 
@@ -66,10 +55,7 @@ free(ptrarray[j]);
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
 
-
-//printf("Test B: elapsed_time in microseconds: %ld\n", end_time.tv_usec-start_time.tv_usec);
-
- return ((((end_time.tv_usec)-(start_time.tv_usec))*1000000)+((end_time.tv_usec)-(start_time.tv_usec)));
+return (double)(((end_time.tv_sec * 1000000) + (end_time.tv_usec)) - ((start_time.tv_sec * 1000000) + (start_time.tv_usec)));
 }
 
 /*Gets a random number between 0 and 1, 
@@ -78,7 +64,7 @@ Mallocing not allowed after a total of 120 mallocs are made
 Freeing not allowed if no pointers to free, frees all pointers malloced
 returns int - the number of microseconds of the entire process 
 */
-int testC(){
+double testC(){
 
 struct timeval start_time;
 gettimeofday(&start_time, NULL);
@@ -122,7 +108,7 @@ gettimeofday(&start_time, NULL);
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
 
-return ((((end_time.tv_usec)-(start_time.tv_usec))*1000000)+((end_time.tv_usec)-(start_time.tv_usec)));
+return (double)(((end_time.tv_sec * 1000000) + (end_time.tv_usec)) - ((start_time.tv_sec * 1000000) + (start_time.tv_usec)));
 }
 
 /*Mallocs an array byte by byte for 240 bytes and
@@ -133,7 +119,7 @@ tests for splitting the array as malloc and
 frees are made and tests for mallocing a block 
 bigger than all the available free blocks
 */
-int testD(){
+double testD(){
 struct timeval start_time;
 gettimeofday(&start_time, NULL);
 
@@ -175,7 +161,8 @@ char *ptrarray[260];
  printf("malloc count %d, freed count %d, realloc count %d, size of array %ld\n",mcounter,fcount,realloc,sizeof(ptrarray)); 
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
-return ((((end_time.tv_usec)-(start_time.tv_usec))*1000000)+((end_time.tv_usec)-(start_time.tv_usec)));
+
+return (double)(((end_time.tv_sec * 1000000) + (end_time.tv_usec)) - ((start_time.tv_sec * 1000000) + (start_time.tv_usec)));
 }
 
 /* allocates 240 bytes and 
@@ -185,7 +172,7 @@ of consecutive free blocks in order
 to allocate a big chunk of memory in
 this stiched block
 */
-int testE(){
+double testE(){
 struct timeval start_time;
 gettimeofday(&start_time, NULL);
 
@@ -211,8 +198,8 @@ gettimeofday(&start_time, NULL);
  
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
-return ((((end_time.tv_usec)-(start_time.tv_usec))*1000000)+((end_time.tv_usec)-(start_time.tv_usec)));
 
+return (double)(((end_time.tv_sec * 1000000) + (end_time.tv_usec)) - ((start_time.tv_sec * 1000000) + (start_time.tv_usec)));
 }
 /*
 int testF(){
@@ -248,24 +235,26 @@ gettimeofday(&start_time, NULL);
  p = (char*)malloc(5000);
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
-return ((end_time.tv_usec)-(start_time.tv_usec));
+
+
+return (double)(((end_time.tv_sec * 1000000) + (end_time.tv_usec)) - ((start_time.tv_sec * 1000000) + (start_time.tv_usec)));
 }
 */
 
-void printruntimes(int runtime[50][5]){
+void printruntimes(double runtime[50][5]){
 
 printf("Test A\tTest B\tTest C\tTest D\tTest E\n");
 for (int i = 0; i<50; i++){
 
 for (int j=0; j<5; j++){
-printf("%d\t", runtime[i][j]);
+printf("%0.f\t", runtime[i][j]);
 }
 printf("\n");	
 }
 
 }
 
-void printmeanruntimes(int runtime[50][5]){
+void printmeanruntimes(double runtime[50][5]){
 
 double testASum = 0;
 double testBSum = 0;
@@ -295,20 +284,24 @@ testBSum += runtime[i][j];
 
 printf("Average Runtimes:\n");
 printf("Test A\tTest B\tTest C\tTest D\tTest E\n");
-printf("%.3f\t", testASum/50);
-printf("%.3f\t", testBSum/50);
-printf("%.3f\t", testCSum/50);
-printf("%.3f\t", testDSum/50);
-printf("%.3f\t", testESum/50); 
+printf("%.2f\t", testASum/(double)50);
+printf("%.2f\t", testBSum/(double)50);
+printf("%.2f\t", testCSum/(double)50);
+printf("%.2f\t", testDSum/(double)50);
+printf("%.2f\t", testESum/(double)50); 
+
+printf("\n\nTotal Runtime in Seconds: %.2f\n", ((testASum+testBSum+testCSum+testDSum+testESum)/1000000) );
 }
 
 
 int main(int argc, char **argv){
-  // int *x = malloc(4080);
-  // int *y = malloc(1);
-int runtime[50][5]; //initializes 50 row, 3 column array to store runtimes - will increase column size for every new test
+//testA();
 
-for(int i = 0; i<1; i++){
+     	// int *x = malloc(4080);
+  // int *y = malloc(1);
+double runtime[50][5]; //initializes 50 row, 3 column array to store runtimes - will increase column size for every new test
+
+for(int i = 0; i<50; i++){
 
 	for (int j = 0; j<5; j++){
 	 
@@ -328,13 +321,13 @@ for(int i = 0; i<1; i++){
 	  runtime[i][j]=(testC());
 	  }
 	  
-	  /*
+	 /* 
 	//column 3, Test D runtimes
 	 if(j==3){
           runtime[i][j]=(testD());
 	  }
-	  */
-	 /*
+	  
+	 
 	//column 4, Test E runtimes
         if(j==4){
           runtime[i][j]=(testE());

@@ -296,7 +296,10 @@ printf("\n\nTotal Runtime in Seconds: %.2f\n", ((testASum+testBSum+testCSum+test
 
 int main(int argc, char **argv){
 //testA();
-
+  int *x, *y;
+  x= NULL;
+  y = malloc(10);
+  free(x);
      	// int *x = malloc(4080);
   // int *y = malloc(1);
 double runtime[50][5]; //initializes 50 row, 3 column array to store runtimes - will increase column size for every new test
@@ -304,7 +307,7 @@ double runtime[50][5]; //initializes 50 row, 3 column array to store runtimes - 
 for(int i = 0; i<50; i++){
 
 	for (int j = 0; j<5; j++){
-	 
+	  /*	 
 	//column 0, Test A runtimes	
 	if (j==0){
 	runtime[i][j]=(testA());
@@ -320,7 +323,7 @@ for(int i = 0; i<50; i++){
         if(j==2){
 	  runtime[i][j]=(testC());
 	  }
-	  
+	  */
 	 /* 
 	//column 3, Test D runtimes
 	 if(j==3){
@@ -338,7 +341,7 @@ for(int i = 0; i<50; i++){
 }
 // printlinkedlist();
  //printf("%ld", sizeof(int));
-printruntimes(runtime);
-printmeanruntimes(runtime);
+//printruntimes(runtime);
+//printmeanruntimes(runtime);
 return 0;
 }

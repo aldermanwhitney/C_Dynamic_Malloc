@@ -191,12 +191,17 @@ return;
 
 void myfree(void *ptr, char* file, int line){
 
+  if(ptr==NULL){
+    printf("ERROR: (File:%s Line:%d) Pointer is NULL, not allocated in memory or already freed\n", file, line);
+    return;
+  }
+
 //no memory has been allocated, nothing to free
 if(!(isInitialized())){
 printf("ERROR: (File:%s Line:%d) No pointer found to free\n", file, line);	
 return;
 }
-
+ 
 struct Metadata *firstmetadata = (void*)&myblock[0]; //set a struct metadata pointer pointing for first spot in myblock
 
  struct Metadata *next;

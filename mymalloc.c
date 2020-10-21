@@ -286,10 +286,6 @@ printuserptrindex(call3);
 //test some free calls
 free(call3);
 
-int z = 5;
-int* x = &z;
-
-free(x);
 //printuserptrindex(call3); //this just tests to see that the byte returned to the user is 1 byte after the (correct) metadata
 
 //for(int i=0; i<240; i++){	

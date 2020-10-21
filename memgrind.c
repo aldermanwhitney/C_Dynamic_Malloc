@@ -243,11 +243,11 @@ return (double)(((end_time.tv_sec * 1000000) + (end_time.tv_usec)) - ((start_tim
 
 void printruntimes(double runtime[50][5]){
 
-printf("Test A\tTest B\tTest C\tTest D\tTest E\n");
+printf("Test A\t\tTest B\t\tTest C\t\tTest D\t\tTest E\n");
 for (int i = 0; i<50; i++){
 
 for (int j=0; j<5; j++){
-printf("%0.f\t", runtime[i][j]);
+printf("%0.f\t\t", runtime[i][j]);
 }
 printf("\n");	
 }
@@ -282,13 +282,13 @@ testBSum += runtime[i][j];
 }	
 }
 
-printf("Average Runtimes:\n");
-printf("Test A\tTest B\tTest C\tTest D\tTest E\n");
-printf("%.2f\t", testASum/(double)50);
-printf("%.2f\t", testBSum/(double)50);
-printf("%.2f\t", testCSum/(double)50);
-printf("%.2f\t", testDSum/(double)50);
-printf("%.2f\t", testESum/(double)50); 
+printf("Average Runtimes in MICROSECONDS:\n");
+printf("Test A\t\tTest B\t\tTest C\t\tTest D\t\tTest E\n");
+printf("%.2f\t\t", testASum/(double)50);
+printf("%.2f\t\t", testBSum/(double)50);
+printf("%.2f\t\t", testCSum/(double)50);
+printf("%.2f\t\t", testDSum/(double)50);
+printf("%.2f\t\t", testESum/(double)50); 
 
 printf("\n\nTotal Runtime in Seconds: %.2f\n", ((testASum+testBSum+testCSum+testDSum+testESum)/1000000) );
 }
@@ -296,10 +296,15 @@ printf("\n\nTotal Runtime in Seconds: %.2f\n", ((testASum+testBSum+testCSum+test
 
 int main(int argc, char **argv){
 //testA();
-  int *x, *y;
-  x= NULL;
+/*  int a = 5;
+  int *z=&a, *x, *y;
+  x = NULL;
   y = malloc(10);
-  free(x);
+  printf("z: %p,x: %p, y: %p\n",z, x,y);
+   free(x);
+   //   free(z);
+   free(y);
+*/
      	// int *x = malloc(4080);
   // int *y = malloc(1);
 double runtime[50][5]; //initializes 50 row, 3 column array to store runtimes - will increase column size for every new test
@@ -307,7 +312,7 @@ double runtime[50][5]; //initializes 50 row, 3 column array to store runtimes - 
 for(int i = 0; i<50; i++){
 
 	for (int j = 0; j<5; j++){
-	  /*	 
+	 
 	//column 0, Test A runtimes	
 	if (j==0){
 	runtime[i][j]=(testA());
@@ -323,7 +328,7 @@ for(int i = 0; i<50; i++){
         if(j==2){
 	  runtime[i][j]=(testC());
 	  }
-	  */
+	  
 	 /* 
 	//column 3, Test D runtimes
 	 if(j==3){
@@ -341,7 +346,7 @@ for(int i = 0; i<50; i++){
 }
 // printlinkedlist();
  //printf("%ld", sizeof(int));
-//printruntimes(runtime);
-//printmeanruntimes(runtime);
+printruntimes(runtime);
+printmeanruntimes(runtime);
 return 0;
 }

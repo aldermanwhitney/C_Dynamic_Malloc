@@ -175,6 +175,11 @@ return;
 if ((block1->isfree==0) || (block2->isfree==0)){
 return;
 }
+//do not combine if block1 and block2 point to same block
+if(block1==block2){
+return;
+}
+
  if(block2->next!=NULL){
    block1->next = block2->next;
  }
@@ -199,7 +204,7 @@ return;
 
 
 if(ptr==NULL){
-    printf("ERROR: (File:%s Line:%d) Pointer is NULL, not allocated in memory or already freed\n", file, line);
+    printf("ERROR: (File:%s Line:%d) Cannot Free a NULL pointer\n", file, line);
     return;
  }
 
@@ -242,17 +247,16 @@ combineblocks(prev, current);
 return;
 }
  }
- if(current!=NULL){
-   prev = current;
- }
- if(current->next!=NULL){
-current = current->next;
- }
+
+//Avoids null pointer, at some point next will equal current
+//This is fine
+//combine method will catch this
+//The only reason we need a next pointer is for the combine method
  if(next->next!=NULL){
 next = next->next;
 }
- //prev = current;
-//current = current->next;
+prev = current;
+current = current->next;
 }
 
 

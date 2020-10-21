@@ -55,17 +55,17 @@ char *ptrarray[120];
 struct timeval start_time;
 gettimeofday(&start_time, NULL);
 
-for (int i = 0; i<10; i++){
+for (int i = 0; i<120; i++){
 char *ptr = malloc(1);
-printf("testB After Malloc\n");
-printlinkedlist();
+//printf("testB After Malloc\n");
+//printlinkedlist();
 ptrarray[i]=ptr;
 }
 
-for(int j = 0; j<10; j++){
+for(int j = 0; j<120; j++){
 free(ptrarray[j]);
-printf("testB After Free\n");
-printlinkedlist();
+//printf("testB After Free\n");
+//printlinkedlist();
 }
 
 //printf("%s", ptrarray[0]); //this line is here temporarily for compilation
@@ -302,11 +302,11 @@ testBSum += runtime[i][j];
 
 printf("Average Runtimes in MICROSECONDS:\n");
 printf("Test A\t\tTest B\t\tTest C\t\tTest D\t\tTest E\n");
-printf("%.2f\t", testASum/(double)50);
-printf("%.2f\t", testBSum/(double)50);
-printf("%.2f\t", testCSum/(double)50);
-printf("%.2f\t", testDSum/(double)50);
-printf("%.2f\t", testESum/(double)50); 
+printf("%.2f\t\t", testASum/(double)50);
+printf("%.2f\t\t", testBSum/(double)50);
+printf("%.2f\t\t", testCSum/(double)50);
+printf("%.2f\t\t", testDSum/(double)50);
+printf("%.2f\t\t", testESum/(double)50); 
 
 printf("\n\nTotal Runtime in Seconds: %.2f\n", ((testASum+testBSum+testCSum+testDSum+testESum)/1000000) );
 }
@@ -314,7 +314,8 @@ printf("\n\nTotal Runtime in Seconds: %.2f\n", ((testASum+testBSum+testCSum+test
 
 int main(int argc, char **argv){
 
-	
+//These are a bunch of random tests I did, I left them here so you can see	
+/*	
 //tests avoiding null pointer on free - this works	
 float *ptra = malloc(12);
 float *ptrb = malloc(42);
@@ -327,7 +328,7 @@ printlinkedlist();
 free(ptrd); 
 printlinkedlist();
 
-/*
+
 //tests combine method - This works
 float *ptra = malloc(12);
 float *ptrb = malloc(42);
@@ -340,9 +341,6 @@ printlinkedlist();
 free(ptrc); //on this call, will combine
 printlinkedlist();
 
-
-	
-//THIS WORKS	
 //this tests the split method 
 //must only split the block thats large enough if it can fit another metadata + 1 byte
 //else return a slightly larger block to the user	
@@ -424,7 +422,7 @@ testA();
   // int *y = malloc(1);
 
 */
-/*
+
 double runtime[50][5]; //initializes 50 row, 3 column array to store runtimes - will increase column size for every new test
 
 for(int i = 0; i<50; i++){
@@ -467,7 +465,7 @@ for(int i = 0; i<50; i++){
  //printf("%ld", sizeof(int));
 printruntimes(runtime);
 printmeanruntimes(runtime);
-*/
+
 return 0;
 }
 

@@ -18,14 +18,28 @@ double testA(){
 struct timeval start_time;
 gettimeofday(&start_time, NULL);
 
+//printf("testA Begin\n");
+//printlinkedlist();
 for (int i = 0; i<120; i++){
 char *ptr = malloc(1);
+
+
+//printf("testA After Malloc\n");
+//printlinkedlist();
 free(ptr);
+
+
+
+//printf("testA After Free\n");
+//printlinkedlist();
 }	
-	
+
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
 
+
+//printf("testA End\n");
+//printlinkedlist();
 return (double)(((end_time.tv_sec * 1000000) + (end_time.tv_usec)) - ((start_time.tv_sec * 1000000) + (start_time.tv_usec)));
 }
 
@@ -41,13 +55,17 @@ char *ptrarray[120];
 struct timeval start_time;
 gettimeofday(&start_time, NULL);
 
-for (int i = 0; i<120; i++){
+for (int i = 0; i<10; i++){
 char *ptr = malloc(1);
+printf("testB After Malloc\n");
+printlinkedlist();
 ptrarray[i]=ptr;
 }
 
-for(int j = 0; j<120; j++){
+for(int j = 0; j<10; j++){
 free(ptrarray[j]);
+printf("testB After Free\n");
+printlinkedlist();
 }
 
 //printf("%s", ptrarray[0]); //this line is here temporarily for compilation
@@ -284,19 +302,115 @@ testBSum += runtime[i][j];
 
 printf("Average Runtimes in MICROSECONDS:\n");
 printf("Test A\t\tTest B\t\tTest C\t\tTest D\t\tTest E\n");
-printf("%.2f\t\t", testASum/(double)50);
-printf("%.2f\t\t", testBSum/(double)50);
-printf("%.2f\t\t", testCSum/(double)50);
-printf("%.2f\t\t", testDSum/(double)50);
-printf("%.2f\t\t", testESum/(double)50); 
+printf("%.2f\t", testASum/(double)50);
+printf("%.2f\t", testBSum/(double)50);
+printf("%.2f\t", testCSum/(double)50);
+printf("%.2f\t", testDSum/(double)50);
+printf("%.2f\t", testESum/(double)50); 
 
 printf("\n\nTotal Runtime in Seconds: %.2f\n", ((testASum+testBSum+testCSum+testDSum+testESum)/1000000) );
 }
 
 
 int main(int argc, char **argv){
+
+	
+//tests avoiding null pointer on free - this works	
+float *ptra = malloc(12);
+float *ptrb = malloc(42);
+float *ptrc = malloc(24);
+float *ptrd = malloc(50);
+float *ptre = malloc(60);
+printlinkedlist();
+free(ptre);
+printlinkedlist();
+free(ptrd); 
+printlinkedlist();
+
+/*
+//tests combine method - This works
+float *ptra = malloc(12);
+float *ptrb = malloc(42);
+float *ptrc = malloc(24);
+float *ptrd = malloc(19);
+float *ptre = malloc(17);
+printlinkedlist();
+free(ptrb);
+printlinkedlist();
+free(ptrc); //on this call, will combine
+printlinkedlist();
+
+
+	
+//THIS WORKS	
+//this tests the split method 
+//must only split the block thats large enough if it can fit another metadata + 1 byte
+//else return a slightly larger block to the user	
+double *ptr1 = malloc(15);
+double *ptr2 = malloc(20);
+double *ptr3 = malloc(30);
+free(ptr2);
+malloc(3);
+printlinkedlist();
+	
+These are all the Errors in the spec, tested tham all and they all work	
+//A: Free()ing addresses that are not pointers: - THIS WORKS
+	   int x;
+   free( (int*)x );
+
+//B: Free()ing pointers that were not allocated by malloc():- THIS WORKS
+  char *p = (char *)malloc( 200 );	   
+   free( p + 10 );
+  // - or -
+  int * z;
+   free( z );
+
+
+//C: Redundant free()ing of the same pointer: - THIS WORKS
+   char  *a = (char*)malloc(100);
+   free( a );
+   free( a );
+  // ... is an error, but:
+
+ char *b = (char *)malloc( 100 );
+   free( b );
+   b = (char *)malloc( 100 );
+   free( b );
+//   ... is perfectly valid, even if malloc() returned the same pointer both times.
+
+//D: Saturation of dynamic memory: - THIS WORKS
+//char *c = (char*)malloc(5000);
+//- or -
+char *d = (char*)malloc(4080);
+char *q = (char*)malloc(1);
+//... your code must gracefully handle being asked for more memory than it can allocate.
+*/
+	
+
+
+
+/*	
+testB();
+	
+	
+printlinkedlist();
+char *ptr1 = malloc(5);
+printlinkedlist();
+char *ptr2 = malloc(1);
+printlinkedlist();
+char *ptr3 = malloc(7);
+	
+
+printlinkedlist();
+free(ptr2);
+printlinkedlist();
+free(ptr1);
+printlinkedlist();
+free(ptr3);
+printlinkedlist();
+testA();
 //testA();
-/*  int a = 5;
+  int a = 5;
   int *z=&a, *x, *y;
   x = NULL;
   y = malloc(10);
@@ -304,9 +418,13 @@ int main(int argc, char **argv){
    free(x);
    //   free(z);
    free(y);
-*/
+
+
      	// int *x = malloc(4080);
   // int *y = malloc(1);
+
+*/
+/*
 double runtime[50][5]; //initializes 50 row, 3 column array to store runtimes - will increase column size for every new test
 
 for(int i = 0; i<50; i++){
@@ -329,7 +447,7 @@ for(int i = 0; i<50; i++){
 	  runtime[i][j]=(testC());
 	  }
 	  
-	 /* 
+	  
 	//column 3, Test D runtimes
 	 if(j==3){
           runtime[i][j]=(testD());
@@ -340,13 +458,16 @@ for(int i = 0; i<50; i++){
         if(j==4){
           runtime[i][j]=(testE());
         }
-	  */
+	  
 	
 	}
 }
+
 // printlinkedlist();
  //printf("%ld", sizeof(int));
 printruntimes(runtime);
 printmeanruntimes(runtime);
+*/
 return 0;
 }
+

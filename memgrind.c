@@ -129,91 +129,121 @@ gettimeofday(&end_time, NULL);
 return (double)(((end_time.tv_sec * 1000000) + (end_time.tv_usec)) - ((start_time.tv_sec * 1000000) + (start_time.tv_usec)));
 }
 
-/*Mallocs an array byte by byte for 240 bytes and
-frees each odd byte in the whole array,
-then tries to malloc more than 1 byte in 
-a smaller free space i.e in a 1 byte space
-tests for splitting the array as malloc and
-frees are made and tests for mallocing a block 
-bigger than all the available free blocks
+/*
+allocates 50 bytes blocks 62 times which                                                                                                                                                                     
+allocates the whole memory array                                                                                                                                                                                
+then frees every odd block                                                                                                                                                                                      
+After freeing, reallocates 45 bytes at the same position                                                                                                                                                        
+from where the 50 bytes were freed. This tests for                                                                                                                                                              
+splitting the block when malloc call                                                                                                                                                                   
+has a size smaller than available sizeblock
+ but available sizeblock 
+is not big enough to split into two with one block
+of size asked and another block of leftover size 
+because leftover size 50-45 < size of metadata so cannot 
+split into two blocks and give user a little extra than they need
 */
 double testD(){
 struct timeval start_time;
 gettimeofday(&start_time, NULL);
 
-char *ptrarray[260];
+char *ptrarray[63];
 //printf("size of ptr array%ld\n", sizeof(ptrarray));
  int mcounter=0, fcount=0, realloc=0;
- for(int i = 0; i < 260; i++){
-   char *ptr = malloc(1);
+ for(int i = 0; i <63 ; i++){
+   char *ptr = malloc(50);
    if(ptr!=NULL){
    ptrarray[i]=ptr;
    mcounter++;
    }
  }
-
- for(int i = 0; i<260; i++){
+ // printlinkedlist();
+ 
+ for(int i = 0; i<63; i++){
    if(ptrarray[i]!=NULL && i%2==1){
      free(ptrarray[i]);
      fcount++;
    }
  }
-
- for(int i = 0; i < 260; i++){
+ // printlinkedlist();
+ 
+ for(int i = 0; i < 63; i++){
    //char *ptr = malloc(2);
    if(i%2==1){
-     char *ptr = malloc(2);
+     char *ptr = malloc(45);
      if(ptr!=NULL){
      ptrarray[i]=ptr;
      realloc++;
      }
    }
- }
- /* 
- for(int i = 0; i<240; i++){
+   }
+ //printlinkedlist();
+  
+ for(int i = 62; i>=0; i--){
    if(ptrarray[i]!=NULL){
      free(ptrarray[i]);
    }
  }
- */
- printf("malloc count %d, freed count %d, realloc count %d, size of array %ld\n",mcounter,fcount,realloc,sizeof(ptrarray)); 
+ // printlinkedlist(); 
+ //printf("malloc count %d, freed count %d, realloc count %d, size of array %ld\n",mcounter,fcount,realloc,sizeof(ptrarray)); 
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
 
 return (double)(((end_time.tv_sec * 1000000) + (end_time.tv_usec)) - ((start_time.tv_sec * 1000000) + (start_time.tv_usec)));
 }
 
-/* allocates 240 bytes and 
-frees them in order starting from 120 bytes 
-to test for stiching 
-of consecutive free blocks in order
-to allocate a big chunk of memory in
-this stiched block
+/* allocates 50 bytes blocks 62 times which
+allocates the whole memory array
+then frees every odd block 
+After freeing, reallocates 30 bytes at the same position
+from where the 50 bytes were freed. This tests for
+splitting the block into two when malloc call
+has a size smaller than available size and available size
+is big enough to break into two blocks, one of the requested 
+malloc call and second block of thhe leftover size + size of metadata
 */
 double testE(){
 struct timeval start_time;
 gettimeofday(&start_time, NULL);
 
- char *ptrarray[240];
- for(int i = 0; i < 24; i++){
-   char *ptr = malloc(10);
+ char *ptrarray[63];
+//printf("size of ptr array%ld\n", sizeof(ptrarray));                                                                                                                                                           
+ int mcounter=0, fcount=0, realloc=0;
+ for(int i = 0; i <63 ; i++){
+   char *ptr = malloc(50);
+   if(ptr!=NULL){
    ptrarray[i]=ptr;
- }
-
- for(int i = 12; i < 24; i++){
-   free(ptrarray[i]);
-   if(i>12 && i%3==0){
-     char *ptr = malloc(50);
-     if(ptr!=NULL){
-     ptrarray[i]=ptr;
-     }
-     else{
-       char *ptr = malloc(30);
-       ptrarray[i]=ptr;
+   mcounter++;
    }
  }
+ // printlinkedlist();                                                                                                                                                                                          
+
+ for(int i = 0; i<63; i++){
+   if(ptrarray[i]!=NULL && i%2==1){
+     free(ptrarray[i]);
+     fcount++;
+   }
  }
- 
+ // printlinkedlist();                                                                                                                                                                                          
+
+ for(int i = 0; i < 63; i++){
+   //char *ptr = malloc(2);                                                                                                                                                                                     
+   if(i%2==1){
+     char *ptr = malloc(30);
+     if(ptr!=NULL){
+     ptrarray[i]=ptr;
+     realloc++;
+     }
+   }
+   }
+ // printlinkedlist();                                                                                                                                                                                           
+  for(int i = 93; i>=0; i--){
+   if(ptrarray[i]!=NULL){
+     free(ptrarray[i]);
+   }
+   }
+  //  printlinkedlist();                                                                                                                                                                                          
+  // printf("malloc count %d, freed count %d, realloc count %d, size of array %ld\n",mcounter,fcount,realloc,sizeof(ptrarray));
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
 
@@ -422,13 +452,13 @@ testA();
   // int *y = malloc(1);
 
 */
-
+//  testE();
 double runtime[50][5]; //initializes 50 row, 3 column array to store runtimes - will increase column size for every new test
 
 for(int i = 0; i<50; i++){
 
 	for (int j = 0; j<5; j++){
-	 
+	  
 	//column 0, Test A runtimes	
 	if (j==0){
 	runtime[i][j]=(testA());
@@ -445,23 +475,23 @@ for(int i = 0; i<50; i++){
 	  runtime[i][j]=(testC());
 	  }
 	  
-	  
+	 
 	//column 3, Test D runtimes
 	 if(j==3){
           runtime[i][j]=(testD());
 	  }
 	  
-	 
+	  
 	//column 4, Test E runtimes
         if(j==4){
           runtime[i][j]=(testE());
         }
+	 
 	  
-	
 	}
 }
-
-// printlinkedlist();
+ 
+//printlinkedlist();
  //printf("%ld", sizeof(int));
 printruntimes(runtime);
 printmeanruntimes(runtime);

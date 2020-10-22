@@ -1,0 +1,35 @@
+Test Cases for Workload D and E
+
+Workload D:
+
+In this workload, we wanted to test splitting of blocks when size asked to be malloced is
+less than the size of first available free block, but the block is not big enough to split because it doesn't have
+enough memory for a new metadata. In this workload, **the split is NOT supposed to happen** and
+the user must get a little more memory than asked for as the split is not allowed
+
+Note: There **will be an error message** for this workload which will say that the memory is
+not large enough to split. This is a valid error and this is what we are testing for (to deny
+the split in case of insufficient memory for breaking it into two blocks)
+
+This Test allocates 50 bytes until the memory array runs out of space.
+Then it frees every odd block in the memory, now each of these odd blocks have a free space of 50 bytes
+Now, we try to re-allocate 45 bytes at these free odd blocks of size 50 bytes. The re-allocation is allowed
+as we have 50 available bytes and the allocation asked by the user is 45 bytes. But splitting of the block into
+two blocks does not happen as (50-45) is not enough bytes to store a new block's metadata. Hence, the user is returned
+a pointer with slightly more bytes than asked for. Hence, this test ensures that splitting is not allowed when there is not
+enough space for a new metadata block.
+
+Workload E:
+This workload is similar to Workload D but it tests the cases where **splitting HAS to happen**
+In this	workload, we wanted to test splitting of blocks	when size asked	to be malloced is
+less than the size of first available free block, and the block is big enough to split because it does have
+enough memory for a new metadata. In this workload, **the split is NOT supposed to happen** and
+the user must get a block of memory of the exact size as asked to malloc by their program as the split is allowed in this case
+
+This Test allocates 50 bytes until the memory array runs out of	space.
+Then it	frees every odd	block in the memory, now each of these odd blocks have a free space of 50 bytes
+Now, we	try to re-allocate 30 bytes at these free odd blocks of	size 50	bytes. The re-allocation is allowed
+as we have 50 available	bytes and the allocation asked by the user is 30 bytes.	Here, splitting the block into
+two blocks does happen as (50-30) bytes is large enough to store a new block's metadata. Hence, the user is returned
+a pointer pointing to the exact same size as the user's program asked for. Hence, this test ensures that splitting is allowed
+when there is enough space for a new metadata block.

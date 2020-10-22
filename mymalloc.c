@@ -197,7 +197,7 @@ void myfree(void *ptr, char* file, int line){
 
 
 if(!(isInitialized())){
-printf("ERROR: (File:%s Line:%d) No such pointer found to free\n", file, line);
+printf("ERROR: (File:%s Line:%d) No such pointer to free\n", file, line);
 return;
 }
 
@@ -241,8 +241,8 @@ printf("found the user pointer, and freed it\n");
 userptr = NULL; //throw away user pointer
 
 //combine with previous or next blocks if applicable
-combineblocks(prev, current);
 combineblocks(current, next); 
+combineblocks(prev, current);
 //printlinkedlist();
 return;
 }

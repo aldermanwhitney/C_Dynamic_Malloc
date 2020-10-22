@@ -61,13 +61,13 @@ char *ptr = malloc(1);
 //printlinkedlist();
 ptrarray[i]=ptr;
 }
-
+//printlinkedlist();
 for(int j = 0; j<120; j++){
 free(ptrarray[j]);
 //printf("testB After Free\n");
 //printlinkedlist();
 }
-
+//printlinkedlist();
 //printf("%s", ptrarray[0]); //this line is here temporarily for compilation
 
 struct timeval end_time;
@@ -122,7 +122,7 @@ gettimeofday(&start_time, NULL);
   
  i++;
  }
- // printf("Number of mallocs %d, number of frees %d\n",totalMallocs,numberFreed);
+ //  printf("Number of mallocs %d, number of frees %d\n",totalMallocs,numberFreed);
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
 
@@ -177,15 +177,15 @@ char *ptrarray[63];
      }
    }
    }
- //printlinkedlist();
+ // printlinkedlist();
   
- for(int i = 62; i>=0; i--){
+ for(int i = 61; i>=0; i--){
    if(ptrarray[i]!=NULL){
      free(ptrarray[i]);
    }
  }
- // printlinkedlist(); 
- //printf("malloc count %d, freed count %d, realloc count %d, size of array %ld\n",mcounter,fcount,realloc,sizeof(ptrarray)); 
+ //  printlinkedlist(); 
+ // printf("malloc count %d, freed count %d, realloc count %d, size of array %ld\n",mcounter,fcount,realloc,sizeof(ptrarray)); 
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
 
@@ -237,13 +237,13 @@ gettimeofday(&start_time, NULL);
    }
    }
  // printlinkedlist();                                                                                                                                                                                           
-  for(int i = 93; i>=0; i--){
+  for(int i = 61; i>=0; i--){
    if(ptrarray[i]!=NULL){
      free(ptrarray[i]);
    }
    }
   //  printlinkedlist();                                                                                                                                                                                          
-  // printf("malloc count %d, freed count %d, realloc count %d, size of array %ld\n",mcounter,fcount,realloc,sizeof(ptrarray));
+  //printf("malloc count %d, freed count %d, realloc count %d, size of array %ld\n",mcounter,fcount,realloc,sizeof(ptrarray));
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
 
@@ -330,7 +330,7 @@ testBSum += runtime[i][j];
 }	
 }
 
-printf("Average Runtimes in MICROSECONDS:\n");
+printf("\nAverage Runtimes in MICROSECONDS:\n");
 printf("Test A\t\tTest B\t\tTest C\t\tTest D\t\tTest E\n");
 printf("%.2f\t\t", testASum/(double)50);
 printf("%.2f\t\t", testBSum/(double)50);
@@ -452,13 +452,13 @@ testA();
   // int *y = malloc(1);
 
 */
-//  testE();
+// testE();
 double runtime[50][5]; //initializes 50 row, 3 column array to store runtimes - will increase column size for every new test
 
 for(int i = 0; i<50; i++){
 
 	for (int j = 0; j<5; j++){
-	  
+	    	  
 	//column 0, Test A runtimes	
 	if (j==0){
 	runtime[i][j]=(testA());
@@ -490,12 +490,14 @@ for(int i = 0; i<50; i++){
 	  
 	}
 }
- 
+//testD();
+// malloc(4080);
+//malloc(63);
 //printlinkedlist();
  //printf("%ld", sizeof(int));
-printruntimes(runtime);
+//printruntimes(runtime);
 printmeanruntimes(runtime);
-
+//printlinkedlist(); 
 return 0;
 }
 

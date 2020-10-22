@@ -37,7 +37,7 @@ printf("metadata at myblock[%ld:%ld]\n", ((char *)metadata - (char *)&myblock[0]
 
 //Given a pointer, will return the index of the array where the users pointer points
 void printuserptrindex(void* userptr){
-printf("userptr at myblock[%ld]\n", ((char *)userptr - (char *)&myblock[0]));	
+  //printf("userptr at myblock[%ld]\n", ((char *)userptr - (char *)&myblock[0]));	
 }
 
 //This prints the entire linked list
@@ -89,7 +89,7 @@ void* userptr = (void*)metadata + sizeof(struct Metadata); //pointer to first sp
 
 //create new block if the excess size is large enough to store a metadata and at least 1 byte
 if (blockexcess>sizeof(struct Metadata)){
-puts("Block is large enough to split. creating new block\n");
+  //puts("Block is large enough to split. creating new block\n");
 struct Metadata *newmetadata = (void*)&myblock[getindex(metadata)+sizeof(struct Metadata)+bytes]; 
 newmetadata->isfree = 1;
 newmetadata->size = blockexcess-sizeof(struct Metadata);
@@ -105,7 +105,7 @@ metadata->isfree = 0;
  //return a slightly larger size to the user
 else
 {
-printf("could not split block, not large enough");	
+  //printf("could not split block, not large enough");	
 metadata->isfree=0;
 }
 
@@ -126,7 +126,7 @@ return NULL;
 //set a struct metadata pointer pointing to the first spot in myblock
 struct Metadata *firstmetadata = (void*)&myblock[0]; 
 
-printf("\nmalloc(%d):\n", bytes);
+//printf("\nmalloc(%d):\n", bytes);
 
 //if memory has not been accessed/malloced before
 //create first metadata block
@@ -144,11 +144,11 @@ struct Metadata *current = firstmetadata;
 //that is both large enough and free
 while(current!=NULL){
 if (((current->size)>=bytes)&& (current->isfree==1)){
-printf("found block which matches malloc request\n");
+  //printf("found block which matches malloc request\n");
 void* userptr = splitblock(current, bytes);
 //printlinkedlist(firstmetadata);
-printf("MALLOC RETURN POINTER: ");
-printuserptrindex(userptr);
+//printf("MALLOC RETURN POINTER: ");
+//printuserptrindex(userptr);
 return userptr;
 }		
 current = current->next;
@@ -185,7 +185,7 @@ block1->next = block2->next;
 block1->size=((block1->size) + (block2->size) + sizeof(struct Metadata));
 block2=NULL;
 
-printf("adjacent free blocks found and combined.\n");
+//printf("adjacent free blocks found and combined.\n");
 return; 
 }
 
@@ -235,8 +235,8 @@ void* userptr = (void*)current + sizeof(struct Metadata);
 if(userptr==ptr){
 current->isfree=1;	
 
-printuserptrindex(userptr);
-printf("found the user pointer, and freed it\n");
+//printuserptrindex(userptr);
+//printf("found the user pointer, and freed it\n");
 
 userptr = NULL; //throw away user pointer
 

@@ -37,7 +37,7 @@ printf("metadata at myblock[%ld:%ld]\n", ((char *)metadata - (char *)&myblock[0]
 
 //Given a pointer, will return the index of the array where the users pointer points
 void printuserptrindex(void* userptr){
-  //printf("userptr at myblock[%ld]\n", ((char *)userptr - (char *)&myblock[0]));	
+printf("userptr at myblock[%ld]\n", ((char *)userptr - (char *)&myblock[0]));	
 }
 
 //This prints the entire linked list
@@ -254,7 +254,6 @@ current = current->next;
 //Avoids null pointer, at some point next will equal null
 //This is fine
 //combine method will catch this
-//The only reason we need a next pointer is for the combine method
 if(next==NULL){
 continue;
 }
@@ -266,32 +265,3 @@ next = next->next;
 printf("ERROR: (File:%s Line:%d) No such pointer found to free\n", file, line);	
 return;  
 }
-
-/*
-//This can be commented out for purposes of using make memgrind. If you want to test here, just compile mymalloc.c regularly
-int main(){
-
-
-//Just some preliminary tests for mymalloc, can change these around and use any pointer type		
-char* call1 = malloc(5);
-char* call2 = malloc(8);
-char* call3 = malloc(7);
-
-printlinkedlist(); //check output with this
-
-printuserptrindex(call1); //this just tests to see that the byte returned to the user is 1 byte after the (correct) metadata
-printuserptrindex(call2);
-printuserptrindex(call3);
-
-//test some free calls
-free(call3);
-
-//printuserptrindex(call3); //this just tests to see that the byte returned to the user is 1 byte after the (correct) metadata
-
-//for(int i=0; i<240; i++){	
-//malloc(1);
-//}
- // printmemory();
-  return 0;
-}
-*/

@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-#include "mymalloc.h" //needed when youre ready to link to mymalloc
-//#include "mymalloc.c"
+#include "mymalloc.h"
 
-/**This file will include the memory test
+/**This file includes the memory tests
  *To test our functions for mymalloc() and myfree()
  from mymalloc.c
  */
@@ -18,28 +17,14 @@ double testA(){
 struct timeval start_time;
 gettimeofday(&start_time, NULL);
 
-//printf("testA Begin\n");
-//printlinkedlist();
 for (int i = 0; i<120; i++){
 char *ptr = malloc(1);
-
-
-//printf("testA After Malloc\n");
-//printlinkedlist();
 free(ptr);
-
-
-
-//printf("testA After Free\n");
-//printlinkedlist();
 }	
 
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
 
-
-//printf("testA End\n");
-//printlinkedlist();
 return (double)(((end_time.tv_sec * 1000000) + (end_time.tv_usec)) - ((start_time.tv_sec * 1000000) + (start_time.tv_usec)));
 }
 
@@ -57,18 +42,11 @@ gettimeofday(&start_time, NULL);
 
 for (int i = 0; i<120; i++){
 char *ptr = malloc(1);
-//printf("testB After Malloc\n");
-//printlinkedlist();
 ptrarray[i]=ptr;
 }
-//printlinkedlist();
 for(int j = 0; j<120; j++){
 free(ptrarray[j]);
-//printf("testB After Free\n");
-//printlinkedlist();
 }
-//printlinkedlist();
-//printf("%s", ptrarray[0]); //this line is here temporarily for compilation
 
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
@@ -95,11 +73,9 @@ gettimeofday(&start_time, NULL);
  while(totalMallocs<=120 && i < 240){
  //choosing random between 0 and 1 
  int random = rand()%2;
- //  printf("random number is %d\n", random);
  if(totalMallocs==120 && numberFreed!=120){
    random=1;
  }
- // printf("random number is %d\n", random);
  if(random==1){
    //free if random is 1                                                                                                                                               
    if(numberMalloced!=0 && ptrarray[numberMalloced-1]!=NULL){
@@ -109,7 +85,6 @@ gettimeofday(&start_time, NULL);
    }
    else{
     random=0;
-    //printf("nothing to free\n");
    }
  }
  if(random==0){
@@ -122,7 +97,6 @@ gettimeofday(&start_time, NULL);
   
  i++;
  }
- //  printf("Number of mallocs %d, number of frees %d\n",totalMallocs,numberFreed);
 struct timeval end_time;
 gettimeofday(&end_time, NULL);
 
@@ -249,45 +223,6 @@ gettimeofday(&end_time, NULL);
 
 return (double)(((end_time.tv_sec * 1000000) + (end_time.tv_usec)) - ((start_time.tv_sec * 1000000) + (start_time.tv_usec)));
 }
-/*
-int testF(){
-struct timeval start_time;
-gettimeofday(&start_time, NULL);
-
-//for(int i = 0; i < 120; i++){
-   int x;
-   free( (int*)x );
- 
- char* p;
- //for(int i = 0; i < 120; i++){
-     p = (char *)malloc( 200 );
-     free(p+10);
- 
-
- // for(int i = 0; i < 120; i++){
-    int * x;
-    free(x);
-  
-
-  p = (char*)malloc(100);
-  free(p);
-  free(p);
-
-  p = (char *)malloc( 100 );
-  free(p);
-  p = (char *)malloc( 100 );
-  free(p);
-
- p = (char*)malloc(4096);
- q = (char*)malloc(1);
- p = (char*)malloc(5000);
-struct timeval end_time;
-gettimeofday(&end_time, NULL);
-
-
-return (double)(((end_time.tv_sec * 1000000) + (end_time.tv_usec)) - ((start_time.tv_sec * 1000000) + (start_time.tv_usec)));
-}
-*/
 
 void printruntimes(double runtime[50][5]){
 
@@ -344,116 +279,7 @@ printf("\n\nTotal Runtime in Seconds: %.2f\n", ((testASum+testBSum+testCSum+test
 
 int main(int argc, char **argv){
 
-//These are a bunch of random tests I did, I left them here so you can see	
-/*	
-//tests avoiding null pointer on free - this works	
-float *ptra = malloc(12);
-float *ptrb = malloc(42);
-float *ptrc = malloc(24);
-float *ptrd = malloc(50);
-float *ptre = malloc(60);
-printlinkedlist();
-free(ptre);
-printlinkedlist();
-free(ptrd); 
-printlinkedlist();
-
-
-//tests combine method - This works
-float *ptra = malloc(12);
-float *ptrb = malloc(42);
-float *ptrc = malloc(24);
-float *ptrd = malloc(19);
-float *ptre = malloc(17);
-printlinkedlist();
-free(ptrb);
-printlinkedlist();
-free(ptrc); //on this call, will combine
-printlinkedlist();
-
-//this tests the split method 
-//must only split the block thats large enough if it can fit another metadata + 1 byte
-//else return a slightly larger block to the user	
-double *ptr1 = malloc(15);
-double *ptr2 = malloc(20);
-double *ptr3 = malloc(30);
-free(ptr2);
-malloc(3);
-printlinkedlist();
-	
-These are all the Errors in the spec, tested tham all and they all work	
-//A: Free()ing addresses that are not pointers: - THIS WORKS
-	   int x;
-   free( (int*)x );
-
-//B: Free()ing pointers that were not allocated by malloc():- THIS WORKS
-  char *p = (char *)malloc( 200 );	   
-   free( p + 10 );
-  // - or -
-  int * z;
-   free( z );
-
-
-//C: Redundant free()ing of the same pointer: - THIS WORKS
-   char  *a = (char*)malloc(100);
-   free( a );
-   free( a );
-  // ... is an error, but:
-
- char *b = (char *)malloc( 100 );
-   free( b );
-   b = (char *)malloc( 100 );
-   free( b );
-//   ... is perfectly valid, even if malloc() returned the same pointer both times.
-
-//D: Saturation of dynamic memory: - THIS WORKS
-//char *c = (char*)malloc(5000);
-//- or -
-char *d = (char*)malloc(4080);
-char *q = (char*)malloc(1);
-//... your code must gracefully handle being asked for more memory than it can allocate.
-*/
-	
-
-
-
-/*	
-testB();
-	
-	
-printlinkedlist();
-char *ptr1 = malloc(5);
-printlinkedlist();
-char *ptr2 = malloc(1);
-printlinkedlist();
-char *ptr3 = malloc(7);
-	
-
-printlinkedlist();
-free(ptr2);
-printlinkedlist();
-free(ptr1);
-printlinkedlist();
-free(ptr3);
-printlinkedlist();
-testA();
-//testA();
-  int a = 5;
-  int *z=&a, *x, *y;
-  x = NULL;
-  y = malloc(10);
-  printf("z: %p,x: %p, y: %p\n",z, x,y);
-   free(x);
-   //   free(z);
-   free(y);
-
-
-     	// int *x = malloc(4080);
-  // int *y = malloc(1);
-
-*/
-// testE();
-double runtime[50][5]; //initializes 50 row, 3 column array to store runtimes - will increase column size for every new test
+double runtime[50][5]; //initializes 50 row, 5 column array to store runtimes
 
 for(int i = 0; i<50; i++){
 
@@ -490,14 +316,8 @@ for(int i = 0; i<50; i++){
 	  
 	}
 }
-//testD();
-// malloc(4080);
-//malloc(63);
-//printlinkedlist();
- //printf("%ld", sizeof(int));
 //printruntimes(runtime);
 printmeanruntimes(runtime);
-//printlinkedlist(); 
 return 0;
 }
 
